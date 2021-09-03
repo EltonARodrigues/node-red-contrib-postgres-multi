@@ -14,13 +14,12 @@
  * limitations under the License.
  **/
 
-var { Pool } = require('pg');
-var named = require('node-postgres-named');
-var querystring = require('querystring');
+const { Pool } = require('pg');
+const qs = require('qs');
 
 module.exports = (RED) => {
   RED.httpAdmin.get('/postgresdb/:id', (req, res) => {
-    var credentials = RED.nodes.getCredentials(req.params.id);
+    const credentials = RED.nodes.getCredentials(req.params.id);
     if (credentials) {
       res.send(JSON.stringify({
         user: credentials.user,
@@ -37,13 +36,13 @@ module.exports = (RED) => {
   });
 
   RED.httpAdmin.post('/postgresdb/:id', (req, res) => {
-    var body = "";
+    let body = "";
     req.on('data', (chunk) => {
       body += chunk;
     });
     req.on('end', () => {
-      var newCreds = querystring.parse(body);
-      var credentials = RED.nodes.getCredentials(req.params.id) || {};
+      const newCreds = qs.parse(body);
+      const credentials = RED.nodes.getCredentials(req.params.id) || {};
       if (newCreds.user == null || newCreds.user == "") {
         delete credentials.user;
       } else {
@@ -66,7 +65,7 @@ module.exports = (RED) => {
     this.db = n.db;
     this.ssl = n.ssl;
 
-    var credentials = this.credentials;
+    const credentials = this.credentials;
     if (credentials) {
       this.user = credentials.user;
       this.password = credentials.password;
@@ -87,7 +86,7 @@ module.exports = (RED) => {
   const PostgresNode = function(n) {
     RED.nodes.createNode(this, n);
 
-    var node = this;
+    const node = this;
 
     node.topic = n.topic;
     node.postgresdb = n.postgresdb;
@@ -97,7 +96,7 @@ module.exports = (RED) => {
 
     if (node.postgresConfig) {
 
-      var connectionConfig = {
+      const connectionConfig = {
         user: node.postgresConfig.user,
         password: node.postgresConfig.password,
         host: node.postgresConfig.hostname,
@@ -106,7 +105,7 @@ module.exports = (RED) => {
         ssl: node.postgresConfig.ssl
       };
 
-      var handleError = (err, msg) => {
+      const handleError = (err, msg) => {
         //node.error(msg); This line is committed and edited to take the msg object also.
         // This allows the error to be caught with a Catch node.
         node.error(err, msg);
@@ -114,7 +113,7 @@ module.exports = (RED) => {
         console.log(msg.payload);
       };
 
-      var pool = new Pool(connectionConfig);
+      const pool = new Pool(connectionConfig);
 
       node.on('input', async (msg) => {
         if (!Array.isArray(msg.payload)) {
@@ -126,22 +125,21 @@ module.exports = (RED) => {
         try {
           const client = await pool.connect();
 
-          named.patch(client);
-
           const queries = msg.payload.slice();
           const outMsg = Object.assign({}, msg);
 
           if (node.output) {
             outMsg.payload = [];
           }
-          
-          var queryError = false;
-          var _queryCounts = [];
+
+          let queryError = false;
+          const _queryCounts = [];
+
           for (let i=0; i < queries.length; ++i) {
             try {
               const { query, params = {}, output = false } = queries[i];
               const result = await client.query(query, params);
-  
+
               if (output && node.output) {
                 // Save count of rows returned by a query
                 _queryCounts.push(result.rows.length);

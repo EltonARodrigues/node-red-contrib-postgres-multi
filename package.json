@@ -1,22 +1,20 @@
 {
-    "name": "node-red-contrib-postgres-multi",
+    "name": "node-red-contrib-postgres-multi-query",
     "version": "0.2.0",
     "description": "A Node-RED node to query PostgreSql, with multi-query support",
     "dependencies": {
-        "pg": "~7.4.1",
-        "node-postgres-named": "^2.4.1",
-        "querystring": "^0.2.0"
+        "pg": "^8.7.1",
+        "qs": "^6.10.1"
     },
     "engines": {
-        "node": ">=8"
+        "node": ">=12"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/BruceFletcher/node-red-contrib-postgres-multi"
+        "url": "https://github.com/EltonARodrigues/node-red-contrib-postgres-multi"
     },
     "license": "Apache-2.0",
     "keywords": [
-        "node-red",
         "postgres",
         "postgresql"
     ],
