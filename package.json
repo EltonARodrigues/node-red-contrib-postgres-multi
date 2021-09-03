@@ -14,10 +14,6 @@
         "url": "https://github.com/EltonARodrigues/node-red-contrib-postgres-multi"
     },
     "license": "Apache-2.0",
-    "keywords": [
-        "postgres",
-        "postgresql"
-    ],
     "node-red": {
         "nodes": {
             "PostgreSql": "postgres.js"
